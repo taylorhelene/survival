@@ -60,18 +60,18 @@ Devvit.addCustomPostType({
         case 'attack':
           if (Math.random() > 0.5) {
             setPoints((prev) => prev + 10);
-            newEvent = 'Monster successfully attacked the community! +10 points';
-            meme = 'https://example.com/attack_meme.jpg';
+            newEvent = 'Monster Mantis successfully attacked the community! +10 points';
+            meme = 'mantis.jpg';
           } else {
             setPoints((prev) => Math.max(0, prev - 5));
-            newEvent = 'Monster encountered defenses! -5 points';
-            meme = 'https://example.com/defense_meme.jpg';
+            newEvent = 'Monster Mantis encountered defenses! -5 points';
+            meme = 'camp.jpg';
           }
           break;
         case 'defend':
           setDefense((prev) => prev + 10);
           newEvent = 'Defense increased by 10!';
-          meme = 'https://example.com/defend_meme.jpg';
+          meme = 'camp.jpg';
           break;
         default:
           break;
@@ -87,13 +87,13 @@ Devvit.addCustomPostType({
 
     const endGame = () => {
       const winner = community === 'monsters' ? 'Monsters' : 'Survivors';
-      const celebrationMeme = 'https://example.com/celebration_meme.jpg';
+      const celebrationMeme = 'winner.jpg';
       return (
         <vstack gap="medium" alignment="center middle">
           <text size="large" weight="bold" color="#fff">
             Game Over! {winner} Win!
           </text>
-          <image url={celebrationMeme} height="120px" width="120px" imageHeight={80} imageWidth={80} />
+          <image url={celebrationMeme} height="80px" width="80px" imageHeight={80} imageWidth={80} />
         </vstack>
       );
     };
@@ -119,14 +119,14 @@ Devvit.addCustomPostType({
 
 {!community && (
           <vstack gap="medium" alignment="center">
-            <text size="large" weight="bold">
-              Choose Your Community
+            <text size="large" weight="bold" style='heading' >
+              Choose Your Community In The Mantis Wars! 
             </text>
             <hstack gap="medium">
-              <button appearance="primary" onPress={() => chooseCommunity('monsters')}>
-                Monsters
+              <button appearance="primary" icon='topic-homegarden-outline' onPress={() => chooseCommunity('monsters')}>
+                Mantis 
               </button>
-              <button appearance="primary" onPress={() => chooseCommunity('survivors')}>
+              <button appearance="primary" icon='topic-sports' onPress={() => chooseCommunity('survivors')}>
                 Survivors
               </button>
             </hstack>
@@ -138,7 +138,7 @@ Devvit.addCustomPostType({
             <text size="large" weight="bold" color="#fff">
               Subreddit Survival
             </text>
-            <text size="small" color="#f9f9f9">
+            <text size='medium' color="#f9f9f9" weight='bold' style='body'  >
               Time Left: {formatTime(timer)}
             </text>
 
