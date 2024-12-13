@@ -53,7 +53,7 @@ Devvit.addCustomPostType({
       const mantisPoints = (await kvStore.get('mantis_points')) || 0;
 
       if (survivorPoints > mantisPoints) {
-        setWinner('Survivors');
+        setWinner('Players');
       } else if (mantisPoints > survivorPoints) {
         setWinner('Mantis');
       } else {

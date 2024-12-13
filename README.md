@@ -14,9 +14,9 @@ Welcome to the **Subreddit Survival** game, a community-driven challenge where p
 
 ## Game Overview
 
-In the **Subreddit Survival** game, two communities (Playerss and Mantis) battle for dominance through resource management, defense building, and explore strategies. Players can choose which community they wish to support, and each community’s success is based on its points and defense. Players’ actions, such as exploring or defending, impact the game state.
+In the **Subreddit Survival** game, two communities (Players and Mantis) battle for dominance through defense building and explore events. Players can choose which community they wish to support, and each community’s success is based on its points and defense. Players’ actions, such as exploring or defending, impact the game state.
 
-This game is powered by **Devvit**, an API that integrates with Reddit to create interactive and persistent games that users can enjoy directly in their subreddit.
+This game is powered by **Devvit**,  that integrates with Reddit to create interactive and persistent games that users can enjoy directly in their subreddit.
 
 ### Key Features:
 - **Community Selection**: Users can choose between two communities: Players or Mantis.
