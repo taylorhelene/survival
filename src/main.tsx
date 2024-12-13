@@ -37,6 +37,7 @@ Devvit.addCustomPostType({
     const [events, setEvents] = useState<
       { id: number; text: string; meme: string; expiry: number }[]
     >([]);
+    const [restartTimer, setRestartTimer] = useState<number | null>(null);
 
     const { kvStore } = context;
 
@@ -60,16 +61,38 @@ Devvit.addCustomPostType({
       }
     };
 
-    // Prefetch winner when the timer hits 0
-    useInterval(async () => {
-      if (timer === 0 && !winner) {
-        await prefetchWinner();
-      }
-    }, 1000).start();
-
+    // Timer logic
     useInterval(async () => {
       if (timer > 0) {
         setTimer((prev) => prev - 1);
+      } else if (timer === 0 && !winner) {
+        await prefetchWinner();
+        setRestartTimer(1800); // Set 30 mins restart timer
+      }
+    }, 1000).start();
+
+    useInterval(() => {
+      if (restartTimer !== null) {
+        if (restartTimer > 0) {
+          setRestartTimer((prev) => prev! - 1);
+        } else {
+
+          // Clear relevant kvStore data
+          kvStore.put('survivors_points', 0);
+          kvStore.put('mantis_points', 0);
+          kvStore.put('community', null);
+          kvStore.put('points', 0);
+          kvStore.put('defense', 0);
+
+          // Reset game state
+          setTimer(180);
+          setCommunity(null);
+          setPoints(0);
+          setDefense(0);
+          setWinner(null);
+          setEvents([]);
+          setRestartTimer(null);
+        }
       }
     }, 1000).start();
 
@@ -93,12 +116,12 @@ Devvit.addCustomPostType({
       if (action === 'attack') {
         if (Math.random() > 0.5) {
           updatedPoints += 10;
-          newEvent = `${community} successfully attacked! +10 points`;
+          newEvent = `${community} successfully explored! +10 points`;
           meme = community === 'survivors' ? 'camp.jpg' : 'mantis.jpg';
           await updateTotalPoints(community || '', 10, 'points');
         } else {
           updatedPoints = Math.max(0, updatedPoints - 5);
-          newEvent = `${community} attack failed! -5 points`;
+          newEvent = `${community} explore failed! -5 points`;
           meme = community === 'survivors' ? 'mantis.jpg' : 'camp.jpg';
         }
       } else if (action === 'defend') {
@@ -152,6 +175,11 @@ Devvit.addCustomPostType({
             imageHeight={80}
             imageWidth={80}
           />
+          {restartTimer !== null && (
+            <text size="medium" weight="bold" color="#fff">
+              Game restarting in: {formatTime(restartTimer)}
+            </text>
+          )}
         </vstack>
       );
     };
@@ -175,11 +203,11 @@ Devvit.addCustomPostType({
           backgroundColor="rgba(8, 174, 234, 0.5)" // 50% opacity
         >
           {!community && (
-            <vstack gap="medium" alignment="center" height='100%'>
+            <vstack gap="medium" alignment="center" height="100%">
               <text size="large" weight="bold" style="heading">
-                Choose Your Community In The Mantis Wars!
+                Choose Your Community In The Mantis Games!
               </text>
-              <hstack gap="medium" height='30%'>
+              <hstack gap="medium" height="30%">
                 <button
                   appearance="primary"
                   icon="topic-homegarden-outline"
@@ -192,61 +220,61 @@ Devvit.addCustomPostType({
                   icon="topic-sports"
                   onPress={() => chooseCommunity('survivors')}
                 >
-                  Survivors
+                  Players
                 </button>
               </hstack>
-              <hstack gap='medium' height='60%' width='100%' alignment='center'>
-                <vstack gap='medium' cornerRadius="full"  height="100%" width="30%" >
+
+              <hstack gap='medium' height='30%' width='100%' alignment='center'>
+                <vstack gap='medium' cornerRadius="full"  height="100%" width="15%" >
                   <image height="100%" width="100%" imageHeight={100} imageWidth={100} url='mantis.jpg' grow resizeMode='fill' />
                 </vstack>
-                <vstack gap='medium' cornerRadius="full"  height="100%" width="30%">
+                <vstack gap='medium' cornerRadius="full"  height="100%" width="15%">
                   <image height="100%" width="100%" imageHeight='300px' imageWidth='300px' url='camp.jpg' grow resizeMode='fill' />
                 </vstack>                
                 
               </hstack>
+
             </vstack>
           )}
 
           {community && (
             <>
               <text size="large" weight="bold" color="#fff">
-                Subreddit Survival
+                Subreddit Mantis Games
               </text>
               <text size="medium" color="#f9f9f9" weight="bold" style="body">
                 Time Left: {formatTime(timer)}
               </text>
-
               <hstack gap="large" alignment="middle center">
                 <vstack alignment="center middle" gap="small">
                   <text size="medium" weight="bold" color="#fff">
-                    Points
+                    Explore environment
                   </text>
-                  <text size="small" color="#f9f9f9">{`Points: ${points}`}</text>
+                  <text size="small" color="#f9f9f9">{`Points 💥💥: ${points}`}</text>
                 </vstack>
                 <vstack alignment="center middle" gap="small">
                   <text size="medium" weight="bold" color="#fff">
-                    Defense
+                    Defending camp 
                   </text>
-                  <text size="small" color="#f9f9f9">{`Defense: ${defense}`}</text>
+                  <text size="small" color="#f9f9f9">{`Defense 💥💥: ${defense}`}</text>
                 </vstack>
               </hstack>
-              <spacer/>
               <hstack gap="medium" alignment="center middle">
-                <button icon="crowd-control-outline" appearance="primary" onPress={() => performAction('attack')}>
-                  Attack
+                <button
+                  icon="crowd-control-outline"
+                  appearance="primary"
+                  onPress={() => performAction('attack')}
+                >
+                  Explore
                 </button>
                 <button appearance="primary" icon="world-outline" onPress={() => performAction('defend')}>
                   Defend
                 </button>
               </hstack>
-            <vstack
-            height={20}
-            >
-
-            </vstack>
+              <vstack  height={20}></vstack>
               <vstack
                 gap="small"
-                alignment='center bottom'
+                alignment="center bottom"
                 width="100%"
                 height="120px"
                 backgroundColor="#222"
@@ -284,4 +312,3 @@ Devvit.addCustomPostType({
 });
 
 export default Devvit;
-
